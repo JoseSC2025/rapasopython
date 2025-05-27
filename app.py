@@ -1,35 +1,63 @@
 import streamlit as st
-import random
 
-st.set_page_config(page_title="Ecuaciones de Primer Grado", layout="centered")
-st.title("🧠 Resuelve la Ecuación de Primer Grado")
+st.set_page_config(page_title="Quiz de Python", layout="centered")
+st.title("🐍 Quiz de Sintaxis de Python")
+st.subheader("Responde las siguientes preguntas:")
 
-# Generar valores aleatorios
-if 'a' not in st.session_state:
-    st.session_state['a'] = random.randint(1, 10)
-    st.session_state['x_real'] = random.randint(-10, 10)
-    st.session_state['b'] = random.randint(-10, 10)
-    st.session_state['c'] = st.session_state['a'] * st.session_state['x_real'] + st.session_state['b']
+# Preguntas y respuestas correctas
+preguntas = [
+    {
+        "pregunta": "¿Cuál es la sintaxis correcta para definir una función en Python?",
+        "opciones": ["func myFunction():", "def myFunction():", "function myFunction():"],
+        "respuesta": "def myFunction():"
+    },
+    {
+        "pregunta": "¿Cómo se accede al tercer elemento de una lista llamada `mi_lista`?",
+        "opciones": ["mi_lista[2]", "mi_lista(3)", "mi_lista[3]"],
+        "respuesta": "mi_lista[2]"
+    },
+    {
+        "pregunta": "¿Cuál es la estructura correcta de un bucle `for` en Python?",
+        "opciones": ["for x in range(5)", "foreach x in range(5)", "for x = 1 to 5"],
+        "respuesta": "for x in range(5)"
+    },
+    {
+        "pregunta": "¿Qué hace la instrucción `if`?",
+        "opciones": ["Ejecuta código si una condición es verdadera", "Repite una instrucción", "Define una función"],
+        "respuesta": "Ejecuta código si una condición es verdadera"
+    },
+    {
+        "pregunta": "¿Cuál de las siguientes líneas añade un elemento a una lista?",
+        "opciones": ["lista.add('hola')", "lista.append('hola')", "lista.insert('hola')"],
+        "respuesta": "lista.append('hola')"
+    }
+]
 
-# Mostrar la ecuación
-a = st.session_state['a']
-b = st.session_state['b']
-c = st.session_state['c']
-x_real = st.session_state['x_real']
+respuestas_usuario = []
 
-st.latex(f"{a}x + {b} = {c}")
+# Mostrar preguntas
+for i, item in enumerate(preguntas):
+    st.markdown(f"**{i + 1}. {item['pregunta']}**")
+    respuesta = st.radio(
+        label="Selecciona una opción:",
+        options=item["opciones"],
+        key=f"pregunta_{i}"
+    )
+    respuestas_usuario.append(respuesta)
 
-# Entrada del usuario
-respuesta = st.number_input("Introduce el valor de x:", step=1.0)
+# Botón para verificar respuestas
+if st.button("Verificar mis respuestas"):
+    puntaje = 0
+    for i, respuesta in enumerate(respuestas_usuario):
+        if respuesta == preguntas[i]["respuesta"]:
+            puntaje += 1
 
-# Verificación
-if st.button("Verificar"):
-    if respuesta == x_real:
-        st.success("✅ ¡Correcto! 🎉")
+    st.markdown(f"### ✅ Obtuviste **{puntaje} de 5** respuestas correctas.")
+
+    if puntaje == 5:
+        st.balloons()
+        st.success("🎉 ¡Excelente! Respondiste todo correctamente.")
+    elif puntaje >= 3:
+        st.info("👍 Buen trabajo. ¡Sigue practicando!")
     else:
-        st.error(f"❌ Incorrecto. La solución era x = {x_real}")
-
-# Botón para nueva ecuación
-if st.button("Nueva ecuación"):
-    st.session_state.clear()
-    st.experimental_rerun()
+        st.warning("📘 Sigue repasando. Puedes hacerlo mejor.")
